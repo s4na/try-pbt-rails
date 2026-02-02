@@ -1,40 +1,24 @@
-# try-pbt-rails
+# README
 
-Property-Based Testing (PBT) を Rails で試すプロジェクト
+This README would normally document whatever steps are necessary to get the
+application up and running.
 
-## 開発環境
+Things you may want to cover:
 
-### 必要なもの
+* Ruby version
 
-- Docker
-- Docker Compose
+* System dependencies
 
-### 起動方法
+* Configuration
 
-```bash
-# コンテナをビルドして起動
-docker compose up -d
+* Database creation
 
-# Railsサーバーにアクセス
-# http://localhost:3000
+* Database initialization
 
-# コンテナ内でコマンド実行
-docker compose exec app bundle exec rails console
+* How to run the test suite
 
-# テスト実行
-docker compose exec app bundle exec rails test
+* Services (job queues, cache servers, search engines, etc.)
 
-# コンテナ停止
-docker compose down
-```
+* Deployment instructions
 
-## PBT (Property-Based Testing)
-
-このプロジェクトでは [rantly](https://github.com/rantly-rb/rantly) を使って Property-Based Testing を行います。
-
-```ruby
-# 例: 文字列を2回reverseすると元に戻る
-property_of { string }.check do |s|
-  assert_equal s, s.reverse.reverse
-end
-```
+* ...
