@@ -325,6 +325,70 @@ Rantly { guard(integer > 0) }      # 正の整数のみ
 
 ---
 
+## ローカル vs CI での実行回数設定
+
+PBT はランダムな入力を多数生成するため、実行回数が多いほど網羅性が高まりますが、その分テスト時間も増加します。
+
+**ローカル開発時** は高速なフィードバックが重要なので回数を少なめに、**CI** では網羅性を重視して回数を多めに設定するのがおすすめです。
+
+### 設定方法
+
+`test/test_helper.rb` で環境変数に応じて回数を切り替えます：
+
+```ruby
+# test/test_helper.rb
+PBT_ITERATIONS = ENV['CI'] ? 100 : 10
+```
+
+テスト内では定数を使用：
+
+```ruby
+test "post title within 255 chars is valid" do
+  PBT_ITERATIONS.times do
+    title_length = Rantly { range(1, 255) }
+    title = "a" * title_length
+
+    post = @user.posts.build(title: title, body: "Test body")
+    assert post.valid?, "Post with title length #{title_length} should be valid"
+  end
+end
+```
+
+### 回数の目安
+
+| 環境 | 回数 | 理由 |
+|------|------|------|
+| ローカル | 10〜20 | 高速なフィードバック優先。基本的なバグは少ない回数でも発見できる |
+| CI | 100〜500 | 網羅性重視。レアなエッジケースも検出したい |
+| リリース前 | 1000+ | 重要なリリース前は徹底的にテスト |
+
+### 複数の設定レベル
+
+より細かく制御したい場合：
+
+```ruby
+# test/test_helper.rb
+PBT_ITERATIONS = case
+                 when ENV['PBT_FULL']  then 1000  # フルテスト
+                 when ENV['CI']        then 100   # CI
+                 else                       10    # ローカル
+                 end
+```
+
+```bash
+# ローカルで通常実行
+rails test
+
+# ローカルでフルテスト
+PBT_FULL=1 rails test
+
+# CI では自動的に 100 回
+```
+
+この設定により、開発中は素早くテストを回しつつ、CI やリリース前には徹底的なテストを実行できます。
+
+---
+
 ## LLM 時代における PBT の価値
 
 ### 1. LLM が考えつかないエッジケースを自動で発見
