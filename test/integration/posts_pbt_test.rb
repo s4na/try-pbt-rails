@@ -33,7 +33,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "create post with valid random titles (1-255 chars) succeeds" do
     login_as(@user)
 
-    20.times do
+    PBT_ITERATIONS.times do
       title_length = Rantly { range(1, 255) }
       title = Rantly { sized(title_length) { string(:alpha) } }
       title = "a" * title_length if title.empty? || title.length != title_length
@@ -50,7 +50,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "create post with invalid titles (>255 chars) fails" do
     login_as(@user)
 
-    15.times do
+    PBT_ITERATIONS.times do
       title_length = Rantly { range(256, 500) }
       title = "a" * title_length
       body = "Valid body content"
@@ -65,7 +65,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "create post with empty title fails" do
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       body = Rantly { sized(100) { string } }
       body = "Some body content" if body.empty?
 
@@ -79,7 +79,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "create post with empty body fails" do
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       title = Rantly { sized(20) { string(:alpha) } }
       title = "Valid Title" if title.empty?
 
@@ -98,7 +98,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
     login_as(@user)
     created_post = @user.posts.create!(title: "Original", body: "Original body")
 
-    15.times do
+    PBT_ITERATIONS.times do
       title_length = Rantly { range(1, 255) }
       new_title = "a" * title_length
       new_body = Rantly { sized(50) { string } }
@@ -117,7 +117,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
     created_post = @user.posts.create!(title: "Original", body: "Original body")
     original_title = created_post.title
 
-    10.times do
+    PBT_ITERATIONS.times do
       title_length = Rantly { range(256, 400) }
       invalid_title = "a" * title_length
 
@@ -134,7 +134,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   # ============================================
 
   test "unauthenticated user cannot create posts with any data" do
-    10.times do
+    PBT_ITERATIONS.times do
       title = Rantly { sized(20) { string(:alpha) } }
       title = "Random Title" if title.empty?
       body = Rantly { sized(50) { string } }
@@ -151,7 +151,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
     created_post = @user.posts.create!(title: "Original", body: "Original body")
     original_title = created_post.title
 
-    10.times do
+    PBT_ITERATIONS.times do
       new_title = Rantly { sized(20) { string(:alpha) } }
       new_title = "New Title" if new_title.empty?
 
@@ -174,7 +174,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
 
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       new_title = Rantly { sized(20) { string(:alpha) } }
       new_title = "Attempted Title" if new_title.empty?
 
@@ -193,7 +193,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "title at exact boundary (255 chars) is valid" do
     login_as(@user)
 
-    5.times do
+    PBT_ITERATIONS.times do
       title = "a" * 255
       body = Rantly { sized(50) { string } }
       body = "Body content" if body.empty?
@@ -207,7 +207,7 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
   test "title at boundary+1 (256 chars) is invalid" do
     login_as(@user)
 
-    5.times do
+    PBT_ITERATIONS.times do
       title = "a" * 256
       body = Rantly { sized(50) { string } }
       body = "Body content" if body.empty?

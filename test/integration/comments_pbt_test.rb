@@ -29,7 +29,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "create comment with random non-empty body succeeds" do
     login_as(@user)
 
-    20.times do
+    PBT_ITERATIONS.times do
       body_length = Rantly { range(1, 500) }
       body = Rantly { sized(body_length) { string } }
       body = "a" * body_length if body.empty? || body.strip.empty?
@@ -44,7 +44,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "create comment with empty body fails" do
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       assert_no_difference "Comment.count" do
         post post_comments_path(@post), params: { comment: { body: "" } }
       end
@@ -71,7 +71,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   # ============================================
 
   test "unauthenticated user cannot create comments with any data" do
-    15.times do
+    PBT_ITERATIONS.times do
       body = Rantly { sized(50) { string } }
       body = "Random comment" if body.empty?
 
@@ -87,7 +87,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
     comment = @post.comments.create!(user: @user, body: "Test comment")
     delete logout_path  # Logout
 
-    10.times do
+    PBT_ITERATIONS.times do
       assert_no_difference "Comment.count" do
         delete post_comment_path(@post, comment)
       end
@@ -102,7 +102,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "user cannot delete other user's comment" do
     other_user = User.create!(name: "Other Commenter", email: "other_commenter@example.com", password: "password123")
 
-    10.times do
+    PBT_ITERATIONS.times do
       body = Rantly { sized(30) { string } }
       body = "Other's comment" if body.empty?
 
@@ -123,7 +123,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "user can delete own comment with any body content" do
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       body = Rantly { sized(50) { string } }
       body = "My comment" if body.empty?
 
@@ -143,7 +143,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "comments are correctly associated with posts" do
     login_as(@user)
 
-    10.times do
+    PBT_ITERATIONS.times do
       # Create multiple posts
       new_post = @user.posts.create!(
         title: Rantly { sized(20) { string(:alpha) } }.presence || "Random Post",
@@ -168,7 +168,7 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
   test "create comment with very long body (stress test)" do
     login_as(@user)
 
-    5.times do
+    PBT_ITERATIONS.times do
       body_length = Rantly { range(1000, 5000) }
       body = "a" * body_length
 
