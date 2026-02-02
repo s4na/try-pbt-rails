@@ -269,6 +269,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
+    rantly (3.0.0)
     rdoc (7.1.0)
       erb
       psych (>= 4.0.0)
@@ -408,6 +409,7 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   rails (~> 8.1.2)
+  rantly
   rubocop-rails-omakase
   selenium-webdriver
   solid_cable
