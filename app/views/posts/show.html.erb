@@ -1,0 +1,46 @@
+<article>
+  <h1><%= @post.title %></h1>
+  <p>投稿者: <%= @post.user.name %> | <%= @post.created_at.strftime("%Y/%m/%d %H:%M") %></p>
+  
+  <% if logged_in? && @post.user == current_user %>
+    <p>
+      <%= link_to "編集", edit_post_path(@post) %> |
+      <%= link_to "削除", @post, method: :delete, data: { turbo_confirm: "本当に削除しますか？" } %>
+    </p>
+  <% end %>
+
+  <div>
+    <%= simple_format(@post.body) %>
+  </div>
+</article>
+
+<hr>
+
+<h2>コメント (<%= @post.comments.count %>)</h2>
+
+<% @post.comments.includes(:user).each do |comment| %>
+  <div>
+    <strong><%= comment.user.name %></strong>
+    <span>(<%= comment.created_at.strftime("%Y/%m/%d %H:%M") %>)</span>
+    <% if logged_in? && comment.user == current_user %>
+      <%= link_to "削除", post_comment_path(@post, comment), method: :delete, data: { turbo_confirm: "削除しますか？" } %>
+    <% end %>
+    <p><%= comment.body %></p>
+  </div>
+<% end %>
+
+<% if logged_in? %>
+  <h3>コメントを投稿</h3>
+  <%= form_with model: [@post, @comment], local: true do |f| %>
+    <div>
+      <%= f.text_area :body, rows: 3, placeholder: "コメントを入力...", required: true %>
+    </div>
+    <div>
+      <%= f.submit "投稿" %>
+    </div>
+  <% end %>
+<% else %>
+  <p><%= link_to "ログイン", login_path %>するとコメントできます。</p>
+<% end %>
+
+<p><%= link_to "一覧に戻る", posts_path %></p>
