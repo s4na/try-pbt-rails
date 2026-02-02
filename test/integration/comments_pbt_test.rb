@@ -11,9 +11,15 @@ class CommentsPbtTest < ActionDispatch::IntegrationTest
     @post = @user.posts.create!(title: "Test Post for Comments", body: "Post body")
   end
 
+  # Helper methods for PBT generators
   def login_as(user)
     post login_path, params: { email: user.email, password: "password123" }
     follow_redirect!
+  end
+
+  def random_body(length = 50)
+    body = Rantly { sized(length) { string } }
+    body.empty? || body.strip.empty? ? "Random comment body" : body
   end
 
   # ============================================

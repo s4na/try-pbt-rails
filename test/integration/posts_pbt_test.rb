@@ -10,9 +10,20 @@ class PostsPbtTest < ActionDispatch::IntegrationTest
     )
   end
 
+  # Helper methods for PBT generators
   def login_as(user)
     post login_path, params: { email: user.email, password: "password123" }
     follow_redirect!
+  end
+
+  def random_title(length)
+    title = Rantly { sized(length) { string(:alpha) } }
+    title.empty? ? "a" * length : title.slice(0, length).ljust(length, "a")
+  end
+
+  def random_body(length = 50)
+    body = Rantly { sized(length) { string } }
+    body.empty? ? "Random body content" : body
   end
 
   # ============================================
